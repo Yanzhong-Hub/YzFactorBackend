@@ -20,7 +20,7 @@ TUSHARE_DOWNLOAD = Callable[[str, str, str], pd.DataFrame]
 def multi_process_download(download_function: TUSHARE_DOWNLOAD,
                            ts_code_list: list,
                            table_name: str,
-                    start_date: str = '',
+                           start_date: str = '',
                            end_date: str = '',
                            max_workers: int = 9) -> None:
     """
