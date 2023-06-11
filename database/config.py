@@ -8,7 +8,7 @@ config.py
 import json
 
 
-def read_config() -> dict:
+def read_config() -> dict[str, str|int]:
     """
     Read database config from database_config.json
     :return: ditc, database config
@@ -56,10 +56,10 @@ def _test() -> None:
     print(f'new configs: {json_config_new}')
 
     # change back to old config
-    set_config(username=json_config_old['username'],
-               password=json_config_old['password'],
-               host=json_config_old['host'],
-               port=json_config_old['port'])
+    set_config(username=json_config_old['username'],  # type: ignore
+               password=json_config_old['password'],  # type: ignore
+               host=json_config_old['host'],  # type: ignore
+               port=json_config_old['port'])  # type: ignore
 
 
 if __name__ == '__main__':

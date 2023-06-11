@@ -18,7 +18,7 @@ TUSHARE_DOWNLOAD = Callable[[str, str, str], pd.DataFrame]
 
 
 def multi_process_download(download_function: TUSHARE_DOWNLOAD,
-                           ts_code_list: list,
+                           ts_code_list: list[str],
                            table_name: str,
                            start_date: str = '',
                            end_date: str = '',
@@ -124,36 +124,31 @@ def init_main(start_date: str, end_date: str) -> None:
     # download stock daily data
     db = db_connect()
     if db.is_table_empty('stock_daily'):
-        stock_list = pd.read_sql('stock_list', db_connect().engine)[
-            'ts_code'].tolist()
+        stock_list: list[str] = pd.read_sql('stock_list', db.engine)['ts_code'].tolist()  # type: ignore
         multi_process_download(stock_daily, stock_list,
                                'stock_daily', start_date, end_date)
 
     # download stock daily data with adjusted factor
     if db.is_table_empty('stock_daily_adj'):
-        stock_list = pd.read_sql('stock_list', db_connect().engine)[
-            'ts_code'].tolist()
+        stock_list = pd.read_sql('stock_list', db.engine)['ts_code'].tolist()  # type: ignore
         multi_process_download(stock_daily_adj, stock_list,
                                'stock_daily_adj', start_date, end_date)
 
     # download stock balance sheet data
     if db.is_table_empty('balance_sheet'):
-        stock_list = pd.read_sql('stock_list', db_connect().engine)[
-            'ts_code'].tolist()
+        stock_list = pd.read_sql('stock_list', db.engine)['ts_code'].tolist()  # type: ignore
         multi_process_download(balance_sheet, stock_list,
                                'balance_sheet', start_date, end_date)
 
     # download stock income statement data
     if db.is_table_empty('income_statement'):
-        stock_list = pd.read_sql('stock_list', db_connect().engine)[
-            'ts_code'].tolist()
+        stock_list = pd.read_sql('stock_list', db.engine)['ts_code'].tolist()  # type: ignore
         multi_process_download(income_statement, stock_list,
                                'income_statement', start_date, end_date)
 
     # download stock cash flow data
     if db.is_table_empty('cash_flow'):
-        stock_list = pd.read_sql('stock_list', db_connect().engine)[
-            'ts_code'].tolist()
+        stock_list = pd.read_sql('stock_list', db.engine)['ts_code'].tolist()  # type: ignore
         multi_process_download(cash_flow, stock_list,
                                'cash_flow', start_date, end_date)
     # dispose

@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS `cash_flow`;
+DROP TABLE IF EXISTS `cash_flow_fill`;
 
-CREATE TABLE `cash_flow`  (
+CREATE TABLE `cash_flow_fill`  (
     `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
     `ts_code` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ts_code',
     `trade_date` DATE NOT NULL COMMENT 'trade date',
@@ -101,9 +101,9 @@ CREATE TABLE `cash_flow`  (
     PRIMARY KEY (`id`) USING BTREE
     ) COMMENT = 'cash flow';
 
-DROP TABLE IF EXISTS `cash_flow_fill`;
+DROP TABLE IF EXISTS `cash_flow`;
 
-CREATE TABLE `cash_flow_fill`  (
+CREATE TABLE `cash_flow`  (
     `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
     `ts_code` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ts_code',
     `ann_date` DATE NOT NULL COMMENT 'announcement date',

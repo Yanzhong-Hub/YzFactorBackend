@@ -191,7 +191,7 @@ def balance_sheet(ts_code: str, start_date: str, end_date: str) -> pd.DataFrame:
         "receiv_financing",
         "use_right_assets",
         "lease_liab"
-    ])
+    ])  # type: ignore
     df['ann_date'] = pd.to_datetime(df['ann_date']).dt.date
     df['f_ann_date'] = pd.to_datetime(df['f_ann_date']).dt.date
     df['end_date'] = pd.to_datetime(df['end_date']).dt.date
@@ -316,7 +316,7 @@ def income_statement(ts_code: str, start_date: str, end_date: str) -> pd.DataFra
         "oth_impair_loss_assets",
         "total_opcost",
         "amodcost_fin_assets"
-    ])
+    ])  # type: ignore
     df['ann_date'] = pd.to_datetime(df['ann_date']).dt.date
     df['f_ann_date'] = pd.to_datetime(df['f_ann_date']).dt.date
     df['end_date'] = pd.to_datetime(df['end_date']).dt.date
@@ -444,7 +444,7 @@ def cash_flow(ts_code: str, start_date: str, end_date: str) -> pd.DataFrame:
         "end_bal_cash_equ",
         "beg_bal_cash_equ",
         "update_flag"
-    ])
+    ])  # type: ignore
     df['ann_date'] = pd.to_datetime(df['ann_date']).dt.date
     df['f_ann_date'] = pd.to_datetime(df['f_ann_date']).dt.date
     df['end_date'] = pd.to_datetime(df['end_date']).dt.date

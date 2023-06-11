@@ -6,9 +6,11 @@ import os
 import json
 import pandas as pd
 
-from sqlalchemy import create_engine, MetaData, Table, text
+from sqlalchemy import create_engine, MetaData, text
 from sqlalchemy.ext.declarative import declarative_base
 from urllib.parse import quote_plus as urlquote
+
+from typing import Any
 
 
 class DataBaseBasic:
@@ -25,7 +27,7 @@ class DataBaseBasic:
         engine_config = f'mysql+{engine}://{username}:{urlquote(password)}@{host}:{port}/{database}'
         self.engine = create_engine(engine_config, echo=False)
 
-    def save_data(self, data: pd.DataFrame, table_name: str, **kwargs) -> None:
+    def save_data(self, data: pd.DataFrame, table_name: str, **kwargs: Any) -> None:
         """
         Save Data to Database
         :param data: pd.DataFrame, data to save
@@ -42,7 +44,7 @@ class DataBaseBasic:
         :param sql: str, sql query str
         :return: pd.DataFrame, data
         """
-        return pd.read_sql(sql=sql, con=self.engine, **kwargs)
+        return pd.read_sql(sql=sql, con=self.engine, **kwargs)  # type: ignore
 
     def create_table_by_sql_file(self, sql_file_path: str) -> None:
         """
@@ -61,7 +63,7 @@ class DataBaseBasic:
                 connection.execute(text(sql))
         connection.close()
 
-    def create_table_by_dict(self, table_name: str, table_structure: dict | None = None) -> None:
+    def create_table_by_dict(self, table_name: str, table_structure: dict[str, str])-> None:
         """
         Create table
         :param table_name: str, table name
@@ -72,21 +74,11 @@ class DataBaseBasic:
         metadata = MetaData()
         metadata.reflect(bind=self.engine)
 
-        try:
-            table = metadata.tables[table_name]
-            if table is None:
-                if table_structure is None:
-                    raise ValueError('No table structure')
-                else:
-                    base.metadata.create_all(
-                        self.engine, tables=[table_structure])
-            else:
-                print(f'Table {table_name} already exists')
-        except KeyError:
-            if table_structure is None:
-                raise ValueError('No table structure')
-            else:
-                base.metadata.create_all(self.engine, tables=[table_structure])
+        if self.check_table(table_name):
+            print(f'Table {table_name} already exists')
+            return
+        else:
+            base.metadata.create_all(self.engine, tables=[table_structure])
 
     def drop_table(self, table_name: str) -> None:
         """
@@ -100,8 +92,7 @@ class DataBaseBasic:
 
         try:
             table = metadata.tables[table_name]
-            if table is not None:
-                base.metadata.drop_all(self.engine, [table], checkfirst=True)
+            base.metadata.drop_all(self.engine, [table], checkfirst=True)
         except KeyError:
             print(f'No table named {table_name}')
 
@@ -122,13 +113,9 @@ class DataBaseBasic:
         """
         metadata = MetaData()
         metadata.reflect(bind=self.engine)
-
         try:
-            table = metadata.tables[table_name]
-            if table is not None:
-                return True
-            else:
-                return False
+            metadata.tables[table_name]
+            return True
         except KeyError:
             return False
 
@@ -168,12 +155,6 @@ def db_connection_test(db: DataBaseBasic) -> str:
     return str({"all table name": db.get_all_table_name()})
 
 
-def _create_table_sql_file_test(db: DataBaseBasic) -> None:
-    """create table test by sql file"""
-    sql_path = 'database/table_structures/stock_basic.sql'
-    db.create_table_by_sql_file(sql_path)
-
-
 def create_all_table_by_sql(table_structure_path: str) -> None:
     """
     create all table in table_structure_path
@@ -191,8 +172,16 @@ def create_all_table_by_sql(table_structure_path: str) -> None:
     db.dispose()
 
 
+def _test():
+
+    db = db_connect()
+    print(db.check_table('stock_list'))
+    print(db.check_table('stock_basic'))
+    db.dispose()
+
 if __name__ == '__main__':
-    from timeit import timeit
-    time_cost = timeit(lambda: create_all_table_by_sql(
-        'database/table_structures'), number=1)
-    print(f'time cost: {time_cost:.2f} s')
+    # from timeit import timeit
+    # time_cost = timeit(lambda: create_all_table_by_sql(
+    #     'database/table_structures'), number=1)
+    # print(f'time cost: {time_cost:.2f} s')
+    _test()
